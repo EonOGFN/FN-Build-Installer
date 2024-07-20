@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FNBuildInstaller", "Installer\FNBuildInstaller.csproj", "{D097850F-0E8A-440F-A8D7-1757C13D296B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
+		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D097850F-0E8A-440F-A8D7-1757C13D296B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D097850F-0E8A-440F-A8D7-1757C13D296B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D097850F-0E8A-440F-A8D7-1757C13D296B}.Debug|x64.ActiveCfg = Debug|x64
+		{D097850F-0E8A-440F-A8D7-1757C13D296B}.Debug|x64.Build.0 = Debug|x64
+		{D097850F-0E8A-440F-A8D7-1757C13D296B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D097850F-0E8A-440F-A8D7-1757C13D296B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D097850F-0E8A-440F-A8D7-1757C13D296B}.Release|x64.ActiveCfg = Release|x64
+		{D097850F-0E8A-440F-A8D7-1757C13D296B}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A03EC799-33CE-4F45-8EBA-1715C7407D65}
+	EndGlobalSection
+EndGlobal
