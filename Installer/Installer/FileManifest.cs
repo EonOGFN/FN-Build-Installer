@@ -6,14 +6,14 @@
         {
             public List<int> ChunksIds = new List<int>();
             public string File = string.Empty;
-            public long FileSize;
+            public long FileSize = 0;
         }
 
         public class ManifestFile
         {
             public string Name = string.Empty;
             public List<ChunkedFile> Chunks = new List<ChunkedFile>();
-            public long Size;
+            public long Size = 0;
         }
     }
 }

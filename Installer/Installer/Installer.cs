@@ -21,7 +21,7 @@ namespace FNBuildInstaller.Installer
                 await semaphore.WaitAsync();
                 try
                 {
-                    WebClient webClient = new WebClient();
+                    HttpClient webClient = new HttpClient();
                     string filePath = Path.Combine(resultPath, chunkedFile.File);
                     FileInfo fileInfo = new FileInfo(filePath);
                     if (File.Exists(filePath) && fileInfo.Length == chunkedFile.FileSize)
@@ -31,54 +31,37 @@ namespace FNBuildInstaller.Installer
                     }
                     else
                     {
-                        Directory.CreateDirectory(Path.GetDirectoryName(filePath));
+                        Directory.CreateDirectory(Path.GetDirectoryName(filePath)!);
                         using (FileStream outputStream = File.OpenWrite(filePath))
                         {
-                            List<int>.Enumerator enumerator = chunkedFile.ChunksIds.GetEnumerator();
-                            try
+                            foreach (int chunkId in chunkedFile.ChunksIds)
                             {
-                                while (enumerator.MoveNext())
+                                try
                                 {
-                                    int chunkId = enumerator.Current;
-                                    while (true)
+                                    string url = $"https://manifest.simplyblk.xyz/{version}/{chunkId}.chunk";
+                                    byte[] chunkData = await webClient.GetByteArrayAsync(url);
+                                    byte[] chunkDecompData = new byte[67108865];
+                                    using MemoryStream memoryStream = new (chunkData);
+                                    using (GZipStream decompressionStream = new (memoryStream, CompressionMode.Decompress))
                                     {
-                                        try
+                                        int bytesRead;
+                                        while ((bytesRead = await decompressionStream.ReadAsync(chunkDecompData, 0, chunkDecompData.Length)) > 0)
                                         {
-                                            string url = $"https://manifest.simplyblk.xyz/{version}/{chunkId}.chunk";
-                                            byte[] chunkData = await webClient.DownloadDataTaskAsync(url);
-                                            byte[] chunkDecompData = new byte[67108865];
-                                            using (MemoryStream memoryStream = new MemoryStream(chunkData))
-                                            using (GZipStream decompressionStream = new GZipStream(memoryStream, CompressionMode.Decompress))
-                                            {
-                                                while (true)
-                                                {
-                                                    int bytesRead = await decompressionStream.ReadAsync(chunkDecompData, 0, chunkDecompData.Length);
-                                                    if (bytesRead > 0)
-                                                    {
-                                                        await outputStream.WriteAsync(chunkDecompData, 0, bytesRead);
-                                                        Interlocked.Add(ref completedBytes, bytesRead);
-                                                        double progress = (double)completedBytes / totalBytes * 100.0;
-                                                        string progressText = $"\rDownloaded: {ConvertStorageSize.FormatBytesWithSuffix(completedBytes)} / {ConvertStorageSize.FormatBytesWithSuffix(totalBytes)} ({progress:F2}%)";
-                                                        int count = progressLength - progressText.Length;
-                                                        if (count > 0)
-                                                            progressText += new string(' ', count);
-                                                        Console.Write(progressText);
-                                                        progressLength = progressText.Length;
-                                                    }
-                                                    else
-                                                        break;
-                                                }
-                                            }
-                                        }
-                                        catch (Exception ex)
-                                        {
+                                            await outputStream.WriteAsync(chunkDecompData, 0, bytesRead);
+                                            Interlocked.Add(ref completedBytes, bytesRead);
+                                            double progress = (double)completedBytes / totalBytes * 100.0;
+                                            string progressText = $"\rDownloaded: {ConvertStorageSize.FormatBytesWithSuffix(completedBytes)} / {ConvertStorageSize.FormatBytesWithSuffix(totalBytes)} ({progress:F2}%)";
+                                            int count = progressLength - progressText.Length;
+                                            if (count > 0)
+                                                progressText += new string(' ', count);
+                                            Console.Write(progressText);
+                                            progressLength = progressText.Length;
                                         }
                                     }
                                 }
-                            }
-                            finally
-                            {
-                                enumerator.Dispose();
+                                catch (Exception)
+                                {
+                                }
                             }
                         }
                     }

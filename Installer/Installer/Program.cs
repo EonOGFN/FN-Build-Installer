@@ -8,7 +8,7 @@ namespace FNBuildInstaller.Installer
 {
     class Program
     {
-        private static async Task<List<string>> GetVersionsAsync()
+        private static async Task<List<string>> GetVersionsAsync() 
         {
             string versionsJson = await Globals.httpClient.GetStringAsync("https://manifest.simplyblk.xyz/versions.json");
             return !string.IsNullOrEmpty(versionsJson) ? JsonConvert.DeserializeObject<List<string>>(versionsJson) ?? throw new Exception("failed to parse versions") : throw new Exception("failed to get versions");
@@ -23,8 +23,8 @@ namespace FNBuildInstaller.Installer
 
         private static async Task Main(string[] args)
         {
-            var httpClient = new WebClient();
-            List<string> versions = JsonConvert.DeserializeObject<List<string>>(httpClient.DownloadString(Globals.SeasonBuildVersion + "/versions.json"));
+            var httpClient = new HttpClient();
+            List<string> versions = JsonConvert.DeserializeObject<List<string>>(await httpClient.GetStringAsync(Globals.SeasonBuildVersion + "/versions.json"))!;
 
             Console.Clear();
 
@@ -56,7 +56,7 @@ namespace FNBuildInstaller.Installer
             if (versionIndex >= 0 && versionIndex < versions.Count)
             {
                 string targetVersion = versions[versionIndex].Split("-", StringSplitOptions.None)[1];
-                ManifestFile manifest = JsonConvert.DeserializeObject<ManifestFile>(httpClient.DownloadString(Globals.SeasonBuildVersion + $"/{targetVersion}/{targetVersion}.manifest"));
+                ManifestFile manifest = JsonConvert.DeserializeObject<ManifestFile>(await httpClient.GetStringAsync(Globals.SeasonBuildVersion + $"/{targetVersion}/{targetVersion}.manifest"))!;
 
                 Console.Write("Please enter the installation path for the game: ");
                 string? resultPath = Console.ReadLine();
